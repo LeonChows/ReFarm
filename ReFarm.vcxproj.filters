@@ -1,0 +1,120 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="头文件\ProcessMonitor">
+      <UniqueIdentifier>{03fb1fc4-339c-428b-b2c2-2a48fbd031da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\Resource">
+      <UniqueIdentifier>{701173c6-0112-4d24-b5c1-869f9221a1eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\MFCFram">
+      <UniqueIdentifier>{59873e89-cc1f-4abf-9f59-14e56fa6c73b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\DLLinject">
+      <UniqueIdentifier>{21aaec8e-787d-4559-a4d7-c537fc7266f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\Resource\ReflectivedllData">
+      <UniqueIdentifier>{0ba9f381-77f2-48cc-b564-5b74d3257aba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\MainFunc">
+      <UniqueIdentifier>{c856c864-86c8-4552-86b3-6cded73753f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\FileFunc">
+      <UniqueIdentifier>{5ad21fdc-7a3a-4693-93a0-1b119cb9afd0}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\ProcessList.h">
+      <Filter>头文件\MainFunc</Filter>
+    </ClInclude>
+    <ClInclude Include="src\FileHelp.h">
+      <Filter>头文件\FileFunc</Filter>
+    </ClInclude>
+    <ClInclude Include="ProcessMonitor.h">
+      <Filter>头文件\ProcessMonitor</Filter>
+    </ClInclude>
+    <ClInclude Include="LookThread_Window.h">
+      <Filter>头文件\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="framework.h">
+      <Filter>头文件\MFCFram</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>头文件\MFCFram</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>头文件\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>头文件\MFCFram</Filter>
+    </ClInclude>
+    <ClInclude Include="ReFarm.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ReFarmDlg.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DLLinject.h">
+      <Filter>头文件\DLLinject</Filter>
+    </ClInclude>
+    <ClInclude Include="src\dll_datax.h">
+      <Filter>头文件\Resource\ReflectivedllData</Filter>
+    </ClInclude>
+    <ClInclude Include="src\dll_datax64.h">
+      <Filter>头文件\Resource\ReflectivedllData</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\ProcessList.cpp">
+      <Filter>头文件\MainFunc</Filter>
+    </ClCompile>
+    <ClCompile Include="src\FileHelp.cpp">
+      <Filter>头文件\FileFunc</Filter>
+    </ClCompile>
+    <ClCompile Include="ProcessMonitor.cpp">
+      <Filter>头文件\ProcessMonitor</Filter>
+    </ClCompile>
+    <ClCompile Include="LookThread_Window.cpp">
+      <Filter>头文件\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="ReFarmDlg.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>头文件\MFCFram</Filter>
+    </ClCompile>
+    <ClCompile Include="ReFarm.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DLLinject.cpp">
+      <Filter>头文件\DLLinject</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="ReFarm.rc">
+      <Filter>资源文件</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\ReFarm.rc2">
+      <Filter>资源文件</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\ReFarm.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+  </ItemGroup>
+</Project>
