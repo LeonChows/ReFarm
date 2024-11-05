@@ -60,6 +60,8 @@ public:
     BOOL reflectinject(DWORD _pid, LPVOID _buf, size_t _size);
     //内存注入
     BOOL meminject(DWORD _pid, LPCSTR _path);
+    //内存注入pro
+    BOOL meminjectPro(DWORD _pid, LPCSTR _path);
     //NT打开进程
     HANDLE OpenProcessNt(DWORD _pid, DWORD flags = PROCESS_ALL_ACCESS);
 private:

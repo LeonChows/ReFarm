@@ -95,4 +95,5 @@ public: // Menu
 	afx_msg void OnMemInject();
 	afx_msg void OnFansheInject();
 	afx_msg void OnThreadHook();
+	afx_msg void OnMemInjecyPro();
 };

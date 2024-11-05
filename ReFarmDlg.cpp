@@ -51,6 +51,7 @@ BEGIN_MESSAGE_MAP(CReFarmDlg, CDialogEx)
 	ON_COMMAND(ID_MEM_INJECT, &CReFarmDlg::OnMemInject)
 	ON_COMMAND(ID_FANSHE_INJECT, &CReFarmDlg::OnFansheInject)
 	ON_COMMAND(ID_THREAD_HOOK, &CReFarmDlg::OnThreadHook)
+	ON_COMMAND(ID_MEM_INJECY_PRO, &CReFarmDlg::OnMemInjecyPro)
 END_MESSAGE_MAP()
 
 BOOL CReFarmDlg::OnInitDialog()
@@ -144,6 +145,7 @@ void CReFarmDlg::TabInit()
 	this->m_TabHandle = (CTabCtrl*)GetDlgItem(IDC_MAIN_TAB);
 	m_TabHandle->InsertItem(0, _T("进程"));
 	m_TabHandle->InsertItem(1, _T("功能"));
+	m_TabHandle->InsertItem(2, _T("解密"));
 }
 
 void CReFarmDlg::MenuInit()
@@ -544,7 +546,10 @@ std::string OpenFileDialog() {
 void CReFarmDlg::OnNtthreadInject()
 {
 	char dllpath[MAX_PATH];
-	strcpy(dllpath, OpenFileDialog().c_str());
+	std::string _Tpath = OpenFileDialog();
+	if (_Tpath.empty())
+		return;
+	strcpy(dllpath, _Tpath.c_str());
 
 	if (this->m_ExeInfo->m_WinFram == "x64")
 		this->m_pm->inject_nt(this->m_ExeInfo->m_PorcessID, dllpath, 1);
@@ -556,7 +561,10 @@ void CReFarmDlg::OnNtthreadInject()
 void CReFarmDlg::OnThreadInject()
 {
 	char dllpath[MAX_PATH];
-	strcpy(dllpath, OpenFileDialog().c_str());
+	std::string _Tpath = OpenFileDialog();
+	if (_Tpath.empty())
+		return;
+	strcpy(dllpath, _Tpath.c_str());
 
 	if (this->m_ExeInfo->m_WinFram == "x64")
 		this->m_pm->inject(this->m_ExeInfo->m_PorcessID, dllpath, 1);
@@ -604,9 +612,11 @@ void CReFarmDlg::OnProcessCopyAll()
 
 void CReFarmDlg::OnMemInject()
 {
-	AfxMessageBox("内存注入 跟反射不是一个东西哦 最喜欢的注入方式 :)");
 	char dllpath[MAX_PATH];
-	strcpy(dllpath, OpenFileDialog().c_str());
+	std::string _Tpath = OpenFileDialog();
+	if (_Tpath.empty())
+		return;
+	strcpy(dllpath, _Tpath.c_str());
 	this->m_pm->meminject(this->m_ExeInfo->m_PorcessID, dllpath);
 }
 
@@ -614,7 +624,10 @@ void CReFarmDlg::OnFansheInject()
 {
 	AfxMessageBox("反射内存注入是一种特殊的注入方式 你的dll需要本程序目录下的文件 否则无法注入成功！");
 	char dllpath[MAX_PATH];
-	strcpy(dllpath, OpenFileDialog().c_str());
+	std::string _Tpath = OpenFileDialog();
+	if (_Tpath.empty())
+		return;
+	strcpy(dllpath, _Tpath.c_str());
 	this->m_pm->reflectinject(this->m_ExeInfo->m_PorcessID, dllpath);
 }
 
@@ -626,4 +639,14 @@ void CReFarmDlg::OnThreadHook()
 #include "src/dll_datax.h"
 #endif // _WIN64
 	this->m_pm->reflectinject(this->m_ExeInfo->m_PorcessID, dll_data, dll_data_len);
+}
+
+void CReFarmDlg::OnMemInjecyPro()
+{
+	char dllpath[MAX_PATH];
+	std::string _Tpath = OpenFileDialog();
+	if (_Tpath.empty())
+		return;
+	strcpy(dllpath, _Tpath.c_str());
+	this->m_pm->meminjectPro(this->m_ExeInfo->m_PorcessID, dllpath);
 }

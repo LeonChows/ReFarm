@@ -82,3 +82,8 @@ BOOL ProcessMonitor::meminject(DWORD _pid, LPCSTR _path)
 {
 	return this->m_DLLinject->MemInject(_pid, _path);
 }
+
+BOOL ProcessMonitor::meminjectPro(DWORD _pid, LPCSTR _path)
+{
+	return this->m_DLLinject->MemInjectPro(_pid, _path);	
+}

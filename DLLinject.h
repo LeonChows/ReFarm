@@ -233,6 +233,7 @@ public:
     BOOL ReflectInject(DWORD _pid, LPCSTR _DLLPath);
     BOOL ReflectInject(DWORD _pid, LPVOID _lpBuffer, size_t _bufsize);
     BOOL MemInject(DWORD _pid, LPCSTR _DLLPath);
+    BOOL MemInjectPro(DWORD _pid, LPCSTR _DLLPath);
 };
 namespace SupInject {
 
@@ -286,6 +287,38 @@ namespace SupInject {
         static DWORD size = 0;
         DWORDX WINAPI MemLoadLibrary(PARAMX* X);
         static WORD* Memx = (WORD*)MemLoadLibrary;
+    }
+
+    namespace MemInject2 {
+        #ifdef _WIN64
+        #define CURRENT_ARCH IMAGE_FILE_MACHINE_AMD64
+        #else
+        #define CURRENT_ARCH IMAGE_FILE_MACHINE_I386
+        #endif
+        using f_LoadLibraryA = HINSTANCE(WINAPI*)(const char* lpLibFilename);
+        using f_GetProcAddress = FARPROC(WINAPI*)(HMODULE hModule, LPCSTR lpProcName);
+        using f_DLL_ENTRY_POINT = BOOL(WINAPI*)(void* hDll, DWORD dwReason, void* pReserved);
+        struct MANUAL_MAPPING_DATA
+        {
+            f_LoadLibraryA pLoadLibraryA;
+            f_GetProcAddress pGetProcAddress;
+            BYTE* pbase;
+            HINSTANCE hMod;
+            DWORD fdwReasonParam;
+            LPVOID reservedParam;
+        };
+        #define RELOC_FLAG32(RelInfo) ((RelInfo >> 0x0C) == IMAGE_REL_BASED_HIGHLOW)
+        #define RELOC_FLAG64(RelInfo) ((RelInfo >> 0x0C) == IMAGE_REL_BASED_DIR64)
+
+        #ifdef _WIN64
+        #define RELOC_FLAG RELOC_FLAG64
+        #else
+        #define RELOC_FLAG RELOC_FLAG32
+        #endif
+
+        void WINAPI Shellcode(MANUAL_MAPPING_DATA* pData);
+        bool WINAPI ManualMapDll(DWORD _pid, HANDLE& _retthread, BYTE* pSrcData);
+
     }
 }
 #endif // _DLLINJECT
