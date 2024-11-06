@@ -34,6 +34,15 @@
     <Filter Include="头文件\FileFunc">
       <UniqueIdentifier>{5ad21fdc-7a3a-4693-93a0-1b119cb9afd0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="头文件\Resource\TAB">
+      <UniqueIdentifier>{aaef8e8b-4866-48d7-80a2-a5588e54fdcf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\Resource\ChildWindow">
+      <UniqueIdentifier>{92b6eca0-39cd-4d72-8e6b-2046cdb8f77e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\CryptoFunc">
+      <UniqueIdentifier>{d7968a0c-9f6e-4842-8771-a7522e6fcc31}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ProcessList.h">
@@ -44,9 +53,6 @@
     </ClInclude>
     <ClInclude Include="ProcessMonitor.h">
       <Filter>头文件\ProcessMonitor</Filter>
-    </ClInclude>
-    <ClInclude Include="LookThread_Window.h">
-      <Filter>头文件\Resource</Filter>
     </ClInclude>
     <ClInclude Include="framework.h">
       <Filter>头文件\MFCFram</Filter>
@@ -75,6 +81,21 @@
     <ClInclude Include="src\dll_datax64.h">
       <Filter>头文件\Resource\ReflectivedllData</Filter>
     </ClInclude>
+    <ClInclude Include="TAB_TWO.h">
+      <Filter>头文件\Resource\TAB</Filter>
+    </ClInclude>
+    <ClInclude Include="LookThread_Window.h">
+      <Filter>头文件\Resource\ChildWindow</Filter>
+    </ClInclude>
+    <ClInclude Include="mem_tab_one.h">
+      <Filter>头文件\Resource\TAB</Filter>
+    </ClInclude>
+    <ClInclude Include="AES.hpp">
+      <Filter>头文件\CryptoFunc</Filter>
+    </ClInclude>
+    <ClInclude Include="base64.hpp">
+      <Filter>头文件\CryptoFunc</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\ProcessList.cpp">
@@ -86,12 +107,6 @@
     <ClCompile Include="ProcessMonitor.cpp">
       <Filter>头文件\ProcessMonitor</Filter>
     </ClCompile>
-    <ClCompile Include="LookThread_Window.cpp">
-      <Filter>头文件\Resource</Filter>
-    </ClCompile>
-    <ClCompile Include="ReFarmDlg.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="pch.cpp">
       <Filter>头文件\MFCFram</Filter>
     </ClCompile>
@@ -100,6 +115,18 @@
     </ClCompile>
     <ClCompile Include="DLLinject.cpp">
       <Filter>头文件\DLLinject</Filter>
+    </ClCompile>
+    <ClCompile Include="TAB_TWO.cpp">
+      <Filter>头文件\Resource\TAB</Filter>
+    </ClCompile>
+    <ClCompile Include="LookThread_Window.cpp">
+      <Filter>头文件\Resource\ChildWindow</Filter>
+    </ClCompile>
+    <ClCompile Include="ReFarmDlg.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="mem_tab_one.cpp">
+      <Filter>头文件\Resource\TAB</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

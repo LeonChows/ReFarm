@@ -10,8 +10,34 @@
 #define IDR_MENU_PROCESS                139
 #define IDD_LOOK_THREAD                 140
 #define IDR_MENU_THREAD                 142
+#define IDD_TAB_TWO                     143
+#define IDD_TAB_ONE                     145
 #define IDC_MAIN_TAB                    1004
 #define IDC_THREAD_LIST                 1007
+#define IDC_Crypto_COMBO                1011
+#define IDC_IV_EDIT                     1012
+#define IDC_IV_COMBO                    1013
+#define IDC_KEY_EDIT                    1014
+#define IDC_OUT_EDIT                    1015
+#define IDC_DECODE_BUTTON               1016
+#define IDC_ENCODE_BUTTON               1020
+#define IDC_INPUT_EDIT                  1021
+#define IDC_OUT_STRING_RADIO            1022
+#define IDC_OUT_HEX_RADIO               1023
+#define IDC_OUT_BASE64_RADIO            1024
+#define IDC_Crypto_Model_STATIC         1025
+#define IDC_IV_STATIC                   1026
+#define IDC_IV_Model_STATIC             1027
+#define IDC_OUT_STATIC                  1028
+#define IDC_INPUT_STATIC                1029
+#define IDC_AES_STATIC                  1030
+#define IDC_KEY_STATIC                  1031
+#define IDC_KEY_COMBO                   1032
+#define IDC_KEY_Model_STATIC            1033
+#define IDC_INPUT_STRING_RADIO          1038
+#define IDC_INPUT_HEX_RADIO             1039
+#define IDC_INPUT_BASE64_RADIO          1040
+#define IDC_BUTTON1                     1041
 #define ID_LOOK_THREAD                  32794
 #define ID_CLOSE_PROCESS                32795
 #define ID_CUP_PROCESS                  32796
@@ -53,9 +79,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        143
+#define _APS_NEXT_RESOURCE_VALUE        148
 #define _APS_NEXT_COMMAND_VALUE         32844
-#define _APS_NEXT_CONTROL_VALUE         1008
+#define _APS_NEXT_CONTROL_VALUE         1042
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

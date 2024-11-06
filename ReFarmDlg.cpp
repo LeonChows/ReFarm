@@ -27,6 +27,7 @@ CReFarmDlg::~CReFarmDlg()
 void CReFarmDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_MAIN_TAB, m_CTAB_MAIN);
 }
 BEGIN_MESSAGE_MAP(CReFarmDlg, CDialogEx)
 	ON_WM_PAINT()
@@ -143,9 +144,19 @@ void CReFarmDlg::ListInit()
 void CReFarmDlg::TabInit()
 {
 	this->m_TabHandle = (CTabCtrl*)GetDlgItem(IDC_MAIN_TAB);
-	m_TabHandle->InsertItem(0, _T("进程"));
-	m_TabHandle->InsertItem(1, _T("功能"));
-	m_TabHandle->InsertItem(2, _T("解密"));
+	m_TabHandle->GetClientRect(&m_rec);
+	m_rec.top += 40;  // 稍微为页面留出一些空间，避免紧贴选项卡
+	m_rec.bottom -= 2;
+	m_rec.left += 1;
+	m_rec.right -= 3;
+	m_TabHandle->InsertItem(0, _T("进程功能"));
+	m_TabHandle->InsertItem(1, _T("内存功能"));
+	m_TabHandle->InsertItem(2, _T("解密功能"));
+	//创建窗口
+	m_page1.Create(IDD_TAB_ONE, GetDlgItem(IDC_MAIN_TAB));
+	m_page2.Create(IDD_TAB_TWO, GetDlgItem(IDC_MAIN_TAB));
+	m_page1.MoveWindow(&m_rec);
+	m_page2.MoveWindow(&m_rec);
 }
 
 void CReFarmDlg::MenuInit()
@@ -284,11 +295,21 @@ void CReFarmDlg::OnTcnSelchangeTab1(NMHDR* pNMHDR, LRESULT* pResult)
 	switch (CurSel)
 	{
 	case 0:
-
-		this->m_ListHandle->ShowWindow(true);
+		this->m_page1.ShowWindow(SW_HIDE);
+		this->m_page2.ShowWindow(SW_HIDE);
+		this->m_ListHandle->ShowWindow(SW_SHOW);
 		break;
 	case 1:
-		this->m_ListHandle->ShowWindow(false);
+		this->m_page1.ShowWindow(SW_SHOW);
+		this->m_page2.ShowWindow(SW_HIDE);
+		this->m_ListHandle->ShowWindow(SW_HIDE);
+		break;
+	case 2:
+		this->m_page1.ShowWindow(SW_HIDE);
+		this->m_page2.ShowWindow(SW_SHOW);
+		this->m_ListHandle->ShowWindow(SW_HIDE);
+		break;
+	default:
 		break;
 	}
 

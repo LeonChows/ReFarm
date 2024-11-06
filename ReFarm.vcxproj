@@ -87,6 +87,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>..\Release\x64</OutDir>
+    <ExternalIncludePath>F:\OpenSSL-Win64\include;$(ExternalIncludePath)</ExternalIncludePath>
+    <LibraryPath>F:\OpenSSL-Win64\lib\VC\x64\MT;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -197,9 +199,12 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AES.hpp" />
+    <ClInclude Include="base64.hpp" />
     <ClInclude Include="DLLinject.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="LookThread_Window.h" />
+    <ClInclude Include="mem_tab_one.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="ProcessMonitor.h" />
     <ClInclude Include="ReFarm.h" />
@@ -209,11 +214,13 @@
     <ClInclude Include="src\dll_datax64.h" />
     <ClInclude Include="src\FileHelp.h" />
     <ClInclude Include="src\ProcessList.h" />
+    <ClInclude Include="TAB_TWO.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DLLinject.cpp" />
     <ClCompile Include="LookThread_Window.cpp" />
+    <ClCompile Include="mem_tab_one.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -225,6 +232,7 @@
     <ClCompile Include="ReFarmDlg.cpp" />
     <ClCompile Include="src\FileHelp.cpp" />
     <ClCompile Include="src\ProcessList.cpp" />
+    <ClCompile Include="TAB_TWO.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="ReFarm.rc" />

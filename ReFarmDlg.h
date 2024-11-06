@@ -4,6 +4,8 @@
 
 #pragma once
 #include "ProcessMonitor.h"
+#include "TAB_TWO.h"
+#include "mem_tab_one.h"
 // CReFarmDlg 对话框
 class CReFarmDlg : public CDialogEx
 {
@@ -65,14 +67,16 @@ private:
 	int m_nSelectedSubItem; // 选中的子项索引
 
 public://表
+	// 主要的TAB页
+	CTabCtrl m_CTAB_MAIN;
+	mem_tab_one m_page1;
+	TAB_TWO m_page2;
 	CTabCtrl* m_TabHandle;
 	afx_msg void TabInit();
 	int m_CurSelTab;
-	CDialog  m_page1;
-	CDialog  m_page2;
+	CRect m_rec;
 	CDialog* pDialog[2];  //用来保存对话框对象指针
 	afx_msg void OnTcnSelchangeTab1(NMHDR* pNMHDR, LRESULT* pResult);
-
 public: // Menu
 	CMenu m_SysMenu;
 	CMenu m_PinfoMenu;
@@ -96,4 +100,5 @@ public: // Menu
 	afx_msg void OnFansheInject();
 	afx_msg void OnThreadHook();
 	afx_msg void OnMemInjecyPro();
+
 };
