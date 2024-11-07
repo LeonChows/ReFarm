@@ -39,8 +39,9 @@
 #define IDC_INPUT_BASE64_RADIO          1040
 #define IDC_SUOHA_BUTTON                1042
 #define IDC_INPUT_UTF8_CHECK            1046
-#define IDC_UTF8_CHECK2                 1047
 #define IDC_OUT_UTF8_CHECK              1047
+#define IDC_CHECK1                      1048
+#define IDC_PW_CHECK                    1048
 #define ID_LOOK_THREAD                  32794
 #define ID_CLOSE_PROCESS                32795
 #define ID_CUP_PROCESS                  32796
@@ -84,7 +85,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        148
 #define _APS_NEXT_COMMAND_VALUE         32844
-#define _APS_NEXT_CONTROL_VALUE         1047
+#define _APS_NEXT_CONTROL_VALUE         1049
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

@@ -550,12 +550,25 @@ void TAB_TWO::suoha2(std::string _path)
 				// 将每一行的文本插入到 CEdit 控件中
 				CString lineCString(line.c_str());
 				pw = line.c_str();
-				md5 = get16bitMd5(pw);
-				if (suoha(md5.data()))
+				int state = ((CButton*)GetDlgItem(IDC_PW_CHECK))->GetCheck();
+				if (!state)
 				{
-					m_out_pEdit->ReplaceSel("Key的明文是:");
-					m_out_pEdit->ReplaceSel(pw.c_str());
-					goto END;
+					md5 = get16bitMd5(pw);
+					if (suoha(md5.data()))
+					{
+						m_out_pEdit->ReplaceSel("Key的明文是:");
+						m_out_pEdit->ReplaceSel(pw.c_str());
+						goto END;
+					}
+				}
+				else
+				{
+					if (suoha(pw.c_str()))
+					{
+						m_out_pEdit->ReplaceSel("Key的明文是:");
+						m_out_pEdit->ReplaceSel(pw.c_str());
+						goto END;
+					}
 				}
 				num++;
 			}
@@ -584,35 +597,67 @@ BOOL TAB_TWO::PreTranslateMessage(MSG* pMsg)
 {
 	if (pMsg->message == WM_KEYDOWN)
 	{
-		if (pMsg->message == WM_KEYDOWN)
+		if ((GetAsyncKeyState(VK_CONTROL) & 0x8000) && (GetAsyncKeyState(_T('A')) & 0x8000))
 		{
-			if (pMsg->wParam == VK_RETURN) // 检查回车键
+			CString txt;
+			int  start, end;
+			// 获取当前焦点控件
+			CWnd* pWnd = GetFocus();
+			// 判断焦点是否在目标 CEdit 控件上
+			CEdit* pEdit1 = (CEdit*)GetDlgItem(IDC_INPUT_EDIT);
+			if (pWnd == pEdit1) // 如果焦点在 CEdit 控件上
 			{
-				// 获取当前焦点控件
-				CWnd* pWnd = GetFocus();
-
-				// 判断焦点是否在目标 CEdit 控件上
-				CEdit* pEdit1 = (CEdit*)GetDlgItem(IDC_INPUT_EDIT);
-				if (pWnd == pEdit1) // 如果焦点在 CEdit 控件上
+				pEdit1->GetWindowText(txt);
+				pEdit1->GetSel(start, end);
+				if (txt.GetLength() == end - start)   // 处于全选状态
 				{
-					// 在 CEdit 中插入回车和换行符
-					pEdit1->ReplaceSel(_T("\r\n"));
-
-					return TRUE;  // 阻止默认的回车处理（即失去焦点）
+					pEdit1->SetSel(-1);          // 取消全选
 				}
-				CEdit* pEdit2 = (CEdit*)GetDlgItem(IDC_OUT_EDIT);
-				if (pWnd == pEdit2) // 如果焦点在 CEdit 控件上
+				else
 				{
-					// 在 CEdit 中插入回车和换行符
-					pEdit2->ReplaceSel(_T("\r\n"));
-
-					return TRUE;  // 阻止默认的回车处理（即失去焦点）
+					pEdit1->SetSel(0, -1);           // 全选
 				}
 			}
+			// 判断焦点是否在目标 CEdit 控件上
+			CEdit* pEdit2 = (CEdit*)GetDlgItem(IDC_OUT_EDIT);
+			if (pWnd == pEdit2) // 如果焦点在 CEdit 控件上
+			{
+				pEdit2->GetWindowText(txt);
+				pEdit2->GetSel(start, end);
+				if (txt.GetLength() == end - start)   // 处于全选状态
+				{
+					pEdit2->SetSel(-1);          // 取消全选
+				}
+				else
+				{
+					pEdit2->SetSel(0, -1);           // 全选
+				}
+			}
+			return  TRUE;
 		}
+		if (pMsg->wParam == VK_RETURN) // 检查回车键
+		{
+			// 获取当前焦点控件
+			CWnd* pWnd = GetFocus();
 
-		return CDialogEx::PreTranslateMessage(pMsg);  // 默认处理其他消息
+			// 判断焦点是否在目标 CEdit 控件上
+			CEdit* pEdit1 = (CEdit*)GetDlgItem(IDC_INPUT_EDIT);
+			if (pWnd == pEdit1) // 如果焦点在 CEdit 控件上
+			{
+				// 在 CEdit 中插入回车和换行符
+				pEdit1->ReplaceSel(_T("\r\n"));
+
+				return TRUE;  // 阻止默认的回车处理（即失去焦点）
+			}
+			CEdit* pEdit2 = (CEdit*)GetDlgItem(IDC_OUT_EDIT);
+			if (pWnd == pEdit2) // 如果焦点在 CEdit 控件上
+			{
+				// 在 CEdit 中插入回车和换行符
+				pEdit2->ReplaceSel(_T("\r\n"));
+
+				return TRUE;  // 阻止默认的回车处理（即失去焦点）
+			}
+		}
 	}
-
 	return CDialogEx::PreTranslateMessage(pMsg);  // 默认处理其他消息
 }
