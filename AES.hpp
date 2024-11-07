@@ -109,7 +109,7 @@ public:
 			throw std::invalid_argument("非法的加密模式");
 		}
 
-		if (EVP_DecryptInit_ex(ctx, cipher, nullptr, key_.data(), mode == ECB ? nullptr : iv_.data()) != 1) {
+		if (EVP_EncryptInit_ex(ctx, cipher, nullptr, key_.data(), mode == ECB ? nullptr : iv_.data()) != 1) {
 			EVP_CIPHER_CTX_free(ctx);
 			throw std::runtime_error("无法初始化解密操作");
 		}
