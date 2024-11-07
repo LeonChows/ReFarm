@@ -514,7 +514,6 @@ bool TAB_TWO::suoha(CString key) {
 	}
 	return false;
 }
-
 //梭哈主函数2
 void TAB_TWO::suoha2(std::string _path)
 {
