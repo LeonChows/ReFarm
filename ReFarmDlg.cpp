@@ -145,8 +145,8 @@ void CReFarmDlg::TabInit()
 {
 	this->m_TabHandle = (CTabCtrl*)GetDlgItem(IDC_MAIN_TAB);
 	m_TabHandle->GetClientRect(&m_rec);
-	m_rec.top += 40;  // 稍微为页面留出一些空间，避免紧贴选项卡
-	m_rec.bottom -= 2;
+	m_rec.top += 31;  // 稍微为页面留出一些空间，避免紧贴选项卡
+	m_rec.bottom += 5;
 	m_rec.left += 1;
 	m_rec.right -= 3;
 	m_TabHandle->InsertItem(0, _T("进程功能"));
@@ -297,6 +297,7 @@ void CReFarmDlg::OnTcnSelchangeTab1(NMHDR* pNMHDR, LRESULT* pResult)
 	case 0:
 		this->m_page1.ShowWindow(SW_HIDE);
 		this->m_page2.ShowWindow(SW_HIDE);
+		this->m_ListHandle->UpdateWindow();
 		this->m_ListHandle->ShowWindow(SW_SHOW);
 		break;
 	case 1:

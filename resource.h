@@ -2,6 +2,10 @@
 // Microsoft Visual C++ 生成的包含文件。
 // 供 ReFarm.rc 使用
 //
+
+#pragma comment(linker,"\"/manifestdependency:type='win32' \
+    name='Microsoft.Windows.Common-Controls' version='6.0.0.0' \
+    processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 #define IDD_REFARM_DIALOG               102
 #define IDR_MAINFRAME                   128
 #define IDR_MENU_SYSTEM                 130
@@ -89,3 +93,4 @@
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
+

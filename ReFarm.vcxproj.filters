@@ -66,12 +66,6 @@
     <ClInclude Include="targetver.h">
       <Filter>头文件\MFCFram</Filter>
     </ClInclude>
-    <ClInclude Include="ReFarm.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="ReFarmDlg.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="DLLinject.h">
       <Filter>头文件\DLLinject</Filter>
     </ClInclude>
@@ -98,6 +92,12 @@
     </ClInclude>
     <ClInclude Include="md5.hpp">
       <Filter>头文件\CryptoFunc</Filter>
+    </ClInclude>
+    <ClInclude Include="ReFarm.h">
+      <Filter>头文件\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="ReFarmDlg.h">
+      <Filter>头文件\Resource</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

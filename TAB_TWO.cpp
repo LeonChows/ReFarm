@@ -51,6 +51,7 @@ BEGIN_MESSAGE_MAP(TAB_TWO, CDialogEx)
 
 
 	ON_BN_CLICKED(IDC_SUOHA_BUTTON, &TAB_TWO::OnBnClickedSuohaButton)
+	ON_WM_CONTEXTMENU()
 END_MESSAGE_MAP()
 
 
@@ -378,7 +379,7 @@ void TAB_TWO::OnBnClickedDecodeButton()
 		MessageBox(e.what());
 	}
 }
-//过滤不可见字符
+// 过滤不可见字符
 bool checkVisibleCharacters(const std::string& input)
 {
 	for (size_t i = input.size() / 2; i < input.size(); ++i) {
@@ -390,7 +391,7 @@ bool checkVisibleCharacters(const std::string& input)
 	}
 	return true;  // 如果前五个字符全部是可见字符，返回 true
 }
-//梭哈主函数
+// 梭哈主函数
 bool TAB_TWO::suoha(CString key) {
 	// 0 = ECB; 1 = CBC;2 = CFB;3 = OFB;4 = CTR;
 	int Cryptomodel = this->m_CryptoModelBom->GetCurSel();
@@ -514,7 +515,7 @@ bool TAB_TWO::suoha(CString key) {
 	}
 	return false;
 }
-//梭哈主函数2
+// 梭哈主函数2
 void TAB_TWO::suoha2(std::string _path)
 {
 	m_out_pEdit->SetWindowText("");
@@ -587,11 +588,12 @@ END:
 	m_out_pEdit->ReplaceSel("秒");
 
 }
-//梭哈
+// 梭哈
 void TAB_TWO::OnBnClickedSuohaButton()
 {
 	startThreads();
 }
+// 消息回调
 BOOL TAB_TWO::PreTranslateMessage(MSG* pMsg)
 {
 	if (pMsg->message == WM_KEYDOWN)
@@ -660,4 +662,136 @@ BOOL TAB_TWO::PreTranslateMessage(MSG* pMsg)
 		}
 	}
 	return CDialogEx::PreTranslateMessage(pMsg);  // 默认处理其他消息
+}
+// 右键消息处理
+void TAB_TWO::OnContextMenu(CWnd* pWnd, CPoint point)
+{
+	CWnd* m_IS_RButton = GetDlgItem(IDC_INPUT_STRING_RADIO);
+	CWnd* m_IH_RButton = GetDlgItem(IDC_INPUT_HEX_RADIO);
+	CWnd* m_IB_RButton = GetDlgItem(IDC_INPUT_BASE64_RADIO);
+	CWnd* m_OS_RButton = GetDlgItem(IDC_OUT_STRING_RADIO);
+	CWnd* m_OH_RButton = GetDlgItem(IDC_OUT_HEX_RADIO);
+	CWnd* m_OB_RButton = GetDlgItem(IDC_OUT_BASE64_RADIO);
+
+	//m_out_pEdit;
+	//m_input_pEdit;
+	// 判断右键点击的是哪个控件
+	if (pWnd == m_IS_RButton)  // 这里m_radioButton是你的CRadioButton控件
+	{
+		CString Temp;
+		std::string _Temp;
+		m_input_pEdit->GetWindowTextA(Temp);
+		_Temp = Temp.GetBuffer();
+		switch (m_input_group)
+		{
+		case HEX:
+			_Temp = hex_to_string(_Temp);
+			break;
+		case BASE64:
+			_Temp = base64_decode(_Temp);
+			break;
+		default:
+			break;
+		}
+		m_input_pEdit->SetWindowTextA(_Temp.c_str());
+	}
+	else if (pWnd == m_IH_RButton)
+	{
+		CString Temp;
+		std::string _Temp;
+		m_input_pEdit->GetWindowTextA(Temp);
+		_Temp = Temp.GetBuffer();
+		switch (m_input_group)
+		{
+		case STRING:
+			_Temp = string_to_hex(_Temp);
+			break;
+		case BASE64:
+			_Temp = base64_decode(_Temp);
+			_Temp = string_to_hex(_Temp);
+			break;
+		default:
+			break;
+		}
+		m_input_pEdit->SetWindowTextA(_Temp.c_str());
+	}
+	else if (pWnd == m_IB_RButton)
+	{
+		CString Temp;
+		std::string _Temp;
+		m_input_pEdit->GetWindowTextA(Temp);
+		_Temp = Temp.GetBuffer();
+		switch (m_input_group)
+		{
+		case STRING:
+			_Temp = base64_encode((unsigned const char*)_Temp.c_str(), _Temp.length());
+			break;
+		case HEX:
+			_Temp = hex_to_string(_Temp);
+			_Temp = base64_encode((unsigned const char*)_Temp.c_str(), _Temp.length());
+			break;
+		default:
+			break;
+		}
+		m_input_pEdit->SetWindowTextA(_Temp.c_str());
+	}
+	else if (pWnd == m_OS_RButton)
+	{
+		CString Temp;
+		std::string _Temp;
+		m_out_pEdit->GetWindowTextA(Temp);
+		_Temp = Temp.GetBuffer();
+		switch (m_out_group)
+		{
+		case HEX:
+			_Temp = hex_to_string(_Temp);
+			break;
+		case BASE64:
+			_Temp = base64_decode(_Temp);
+			break;
+		default:
+			break;
+		}
+		m_out_pEdit->SetWindowTextA(_Temp.c_str());
+	}
+	else if (pWnd == m_OH_RButton)
+	{
+		CString Temp;
+		std::string _Temp;
+		m_out_pEdit->GetWindowTextA(Temp);
+		_Temp = Temp.GetBuffer();
+		switch (m_out_group)
+		{
+		case STRING:
+			_Temp = string_to_hex(_Temp);
+			break;
+		case BASE64:
+			_Temp = base64_decode(_Temp);
+			_Temp = string_to_hex(_Temp);
+			break;
+		default:
+			break;
+		}
+		m_out_pEdit->SetWindowTextA(_Temp.c_str());
+	}
+	else if (pWnd == m_OB_RButton)
+	{
+		CString Temp;
+		std::string _Temp;
+		m_out_pEdit->GetWindowTextA(Temp);
+		_Temp = Temp.GetBuffer();
+		switch (m_out_group)
+		{
+		case STRING:
+			_Temp = base64_encode((unsigned const char*)_Temp.c_str(), _Temp.length());
+			break;
+		case HEX:
+			_Temp = hex_to_string(_Temp);
+			_Temp = base64_encode((unsigned const char*)_Temp.c_str(), _Temp.length());
+			break;
+		default:
+			break;
+		}
+		m_out_pEdit->SetWindowTextA(_Temp.c_str());
+	}
 }

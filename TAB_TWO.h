@@ -55,4 +55,6 @@ public:
 		std::thread threads(&TAB_TWO::suoha2, this,"a");
 		threads.detach();
 	}
+
+	afx_msg void OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/);
 };
