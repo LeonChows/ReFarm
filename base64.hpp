@@ -1,86 +1,41 @@
+#include <openssl/bio.h>
 #include <openssl/evp.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
+#include <openssl/buffer.h>
+#include <cstring>
+#include <iostream>
 // Base64 编码函数
-char* base64_encode(const unsigned char* data, size_t length) {
-    EVP_ENCODE_CTX* ctx;
-    int out_len = 0;
-    char* encoded_data = NULL;
+std::string base64_encode(const unsigned char* buffer, size_t length)
+{
+	BIO* bio = BIO_new(BIO_s_mem());
+	BIO* b64 = BIO_new(BIO_f_base64());
+	bio = BIO_push(b64, bio);
 
-    // 创建EVP编码上下文
-    ctx = EVP_ENCODE_CTX_new();
-    if (ctx == NULL) {
-        fprintf(stderr, "EVP_ENCODE_CTX_new failed\n");
-        return NULL;
-    }
+	// 忽略换行符
+	BIO_set_flags(bio, BIO_FLAGS_BASE64_NO_NL);
 
-    // 初始化编码上下文
-    EVP_EncodeInit(ctx);
+	BIO_write(bio, buffer, length);
+	BIO_flush(bio);
 
-    // 计算编码后的输出缓冲区大小
-    int encoded_len = EVP_ENCODE_LENGTH(length);
-
-    // 分配足够的内存存放编码后的数据
-    encoded_data = (char*)malloc(encoded_len + 1);
-    if (encoded_data == NULL) {
-        fprintf(stderr, "Memory allocation failed\n");
-        EVP_ENCODE_CTX_free(ctx);
-        return NULL;
-    }
-
-    // 执行编码
-    EVP_EncodeUpdate(ctx, (unsigned char*)encoded_data, &out_len, data, length);
-
-    // 最后一次更新
-    EVP_EncodeFinal(ctx, (unsigned char*)encoded_data + out_len, &out_len);
-
-    // 添加字符串结尾符
-    encoded_data[encoded_len] = '\0';
-
-    // 清理资源
-    EVP_ENCODE_CTX_free(ctx);
-
-    return encoded_data;
+	BUF_MEM* buffer_ptr;
+	BIO_get_mem_ptr(bio, &buffer_ptr);
+	std::string encoded_data(buffer_ptr->data, buffer_ptr->length);
+	BIO_free_all(bio);
+	return encoded_data;
 }
 // Base64 解码函数
-unsigned char* base64_decode(const char* encoded_data, size_t length) {
-    EVP_ENCODE_CTX* ctx;
-    int out_len = 0;
-    unsigned char* decoded_data = NULL;
+std::string base64_decode(const std::string& encoded_string) {
+	BIO* bio = BIO_new_mem_buf(encoded_string.data(), -1);
+	BIO* b64 = BIO_new(BIO_f_base64());
+	bio = BIO_push(b64, bio);
 
-    // 创建EVP解码上下文
-    ctx = EVP_ENCODE_CTX_new();
-    if (ctx == NULL) {
-        fprintf(stderr, "EVP_ENCODE_CTX_new failed\n");
-        return NULL;
-    }
+	// 忽略换行符
+	BIO_set_flags(bio, BIO_FLAGS_BASE64_NO_NL);
 
-    // 初始化解码上下文
-    EVP_DecodeInit(ctx);
+	std::string decoded_string(encoded_string.length(), '\0');
+	int decoded_length = BIO_read(bio, &decoded_string[0], encoded_string.length());
 
-    // 计算解码后的输出缓冲区大小
-    length = EVP_DECODE_LENGTH(strlen(encoded_data));
+	BIO_free_all(bio);
 
-    // 分配足够的内存存放解码后的数据
-    decoded_data = (unsigned char*)malloc(length);
-    if (decoded_data == NULL) {
-        fprintf(stderr, "Memory allocation failed\n");
-        EVP_ENCODE_CTX_free(ctx);
-        return NULL;
-    }
-
-    // 执行解码
-    EVP_DecodeUpdate(ctx, decoded_data, &out_len, (unsigned char*)encoded_data, strlen(encoded_data));
-
-    // 最后一次更新
-    EVP_DecodeFinal(ctx, decoded_data + out_len, &out_len);
-
-    // 更新解码后的长度
-    length = out_len;
-
-    // 清理资源
-    EVP_ENCODE_CTX_free(ctx);
-
-    return decoded_data;
+	decoded_string.resize(decoded_length);  // 调整字符串到实际大小
+	return decoded_string;
 }

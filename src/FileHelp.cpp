@@ -174,6 +174,47 @@ std::string FileHelp::GetProgramDir()
 	int pos = strPath.find_last_of('\\', strPath.length());
 	return strPath.substr(0, pos);  // Return the directory without the file name
 }
+//读取文本文件内容
+std::string FileHelp::readTextFile(const fs::path& filePath)
+{
+	std::ifstream file(filePath);
+	std::stringstream fileContents;
+
+	if (!file) {
+		std::cerr << "Unable to open file: " << filePath << std::endl;
+		return "";
+	}
+
+	std::string line;
+	// 逐行读取文件内容并存储到 stringstream 中
+	while (std::getline(file, line)) {
+		fileContents << line << "\r\n";  // 每一行后加换行符
+	}
+
+	file.close();
+	return fileContents.str();  // 返回文件的完整内容
+}
+//遍历指定目录的文本文件
+std::string FileHelp::processDirectory(const fs::path& dirPath,std::string&curPath)
+{
+	if (!fs::exists(dirPath) || !fs::is_directory(dirPath)) {
+		std::cerr << "目录不存在或不是有效目录" << std::endl;
+		return "";
+	}
+
+	for (const auto& entry : fs::directory_iterator(dirPath)) {
+		if (fs::is_regular_file(entry) && entry.path().extension() == ".txt") {
+
+			//std::cout << "Reading file: " << entry.path() << std::endl;
+			curPath = entry.path().string();
+			std::string fileContent = readTextFile(entry.path());  // 获取文件内容
+			// 如果文件内容不为空，输出内容
+			if (!fileContent.empty()) {
+				return fileContent;
+			}
+		}
+	}
+}
 //创建管理员进程 第一个参数留空为创建自身的管理员进程
 BOOL FileHelp::CreateSystemProcess(const char* ProcessPath, const char* StartParameter, HANDLE& _hPocessID){
 	//包含 ShellExecuteEx 使用的信息。

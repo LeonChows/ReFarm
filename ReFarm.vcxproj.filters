@@ -96,6 +96,9 @@
     <ClInclude Include="base64.hpp">
       <Filter>头文件\CryptoFunc</Filter>
     </ClInclude>
+    <ClInclude Include="md5.hpp">
+      <Filter>头文件\CryptoFunc</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\ProcessList.cpp">

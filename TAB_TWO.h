@@ -1,9 +1,13 @@
 ﻿#pragma once
 #include "afxdialogex.h"
-
-
 // TAB_TWO 对话框
-
+#include <thread>
+#include <vector>
+#include <atomic>
+#include <string>
+#include <time.h>
+#include <chrono>
+#include <codecvt>
 class TAB_TWO : public CDialogEx
 {
 	DECLARE_DYNAMIC(TAB_TWO)
@@ -30,6 +34,9 @@ public:
 	CComboBox* m_CryptoModelBom;
 	CComboBox* m_KeyModelBom;
 	CComboBox* m_IvModelBom;
+	CEdit* m_input_pEdit;
+	CEdit* m_out_pEdit;
+	CEdit* m_iv_pEdit;
 
 	afx_msg void OnBnClickedInputgroup();
 	afx_msg void OnBnClickedOutgroup();
@@ -37,4 +44,15 @@ public:
 	int m_out_group;
 	afx_msg void OnBnClickedEncodeButton();
 	afx_msg void OnBnClickedDecodeButton();
+	afx_msg void OnBnClickedSuohaButton();
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
+//diy
+	afx_msg bool suoha(CString key);
+	void suoha2(std::string _path);
+
+	void startThreads() 
+	{
+		std::thread threads(&TAB_TWO::suoha2, this,"a");
+		threads.detach();
+	}
 };

@@ -76,6 +76,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <ExternalIncludePath>F:\OpenSSL-Win64\include;$(ExternalIncludePath)</ExternalIncludePath>
+    <LibraryPath>F:\OpenSSL-Win64\lib\VC\x64\MT;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
@@ -100,6 +102,7 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <ConformanceMode>true</ConformanceMode>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -204,6 +207,7 @@
     <ClInclude Include="DLLinject.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="LookThread_Window.h" />
+    <ClInclude Include="md5.hpp" />
     <ClInclude Include="mem_tab_one.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="ProcessMonitor.h" />

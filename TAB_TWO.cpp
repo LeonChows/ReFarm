@@ -5,12 +5,13 @@
 #include "ReFarm.h"
 #include "afxdialogex.h"
 #include "TAB_TWO.h"
-
+#include "src\FileHelp.h"
 enum _INPUT
 {
 	STRING = 0,
 	HEX = 1,
-	BASE64 = 2
+	BASE64 = 2,
+	UTF8 = 3,
 };
 // TAB_TWO 对话框
 
@@ -32,10 +33,7 @@ void TAB_TWO::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Radio(pDX, IDC_INPUT_STRING_RADIO, m_input_group);
-
-
 	DDX_Radio(pDX, IDC_OUT_STRING_RADIO, m_out_group);
-
 }
 
 
@@ -47,8 +45,12 @@ BEGIN_MESSAGE_MAP(TAB_TWO, CDialogEx)
 	ON_BN_CLICKED(IDC_OUT_STRING_RADIO, &TAB_TWO::OnBnClickedOutgroup)
 	ON_BN_CLICKED(IDC_OUT_HEX_RADIO, &TAB_TWO::OnBnClickedOutgroup)
 	ON_BN_CLICKED(IDC_OUT_BASE64_RADIO, &TAB_TWO::OnBnClickedOutgroup)
+
 	ON_BN_CLICKED(IDC_ENCODE_BUTTON, &TAB_TWO::OnBnClickedEncodeButton)
 	ON_BN_CLICKED(IDC_DECODE_BUTTON, &TAB_TWO::OnBnClickedDecodeButton)
+
+
+	ON_BN_CLICKED(IDC_SUOHA_BUTTON, &TAB_TWO::OnBnClickedSuohaButton)
 END_MESSAGE_MAP()
 
 
@@ -65,15 +67,20 @@ BOOL TAB_TWO::OnInitDialog()
 	this->m_CryptoModelBom->SetCurSel(0);
 	this->m_IvModelBom->SetCurSel(0);
 	this->m_KeyModelBom->SetCurSel(0);
-	CEdit* INPUT_pEdit = (CEdit*)GetDlgItem(IDC_INPUT_EDIT);
-	CEdit* OUT_pEdit = (CEdit*)GetDlgItem(IDC_OUT_EDIT);
+	m_input_pEdit = (CEdit*)GetDlgItem(IDC_INPUT_EDIT);
+	m_out_pEdit = (CEdit*)GetDlgItem(IDC_OUT_EDIT);
+	m_iv_pEdit = (CEdit*)GetDlgItem(IDC_IV_EDIT);
 	// 垂直滚动条自动下移
-	INPUT_pEdit->LineScroll(INPUT_pEdit->GetLineCount());
-	OUT_pEdit->LineScroll(OUT_pEdit->GetLineCount());
+	m_input_pEdit->LineScroll(m_input_pEdit->GetLineCount());
+	m_out_pEdit->LineScroll(m_out_pEdit->GetLineCount());
+	m_iv_pEdit->SetWindowTextA("0000000000000000");
+	
 	return TRUE; 
 }
 #include "AES.hpp"
 #include "base64.hpp"
+#include "md5.hpp"
+
 void TAB_TWO::OnBnClickedInputgroup()
 {
 	UpdateData(true);
@@ -124,25 +131,40 @@ std::string hex_to_string(const std::string& hexStr) {
 
 	return result;
 }
+// 函数：string转wstring
+std::wstring stringTowstring(const std::string& wide_str) {
+	std::wstring wide_string(wide_str.begin(), wide_str.end());
+	return wide_string;
+}
+// 函数：wstring转string
+std::string wstringTostring(const std::wstring& wide_str) {
+	std::string wide_string(wide_str.begin(), wide_str.end());
+	return wide_string;
+}
+// 加密
 void TAB_TWO::OnBnClickedEncodeButton()
 {
 	// 0 = ECB; 1 = CBC;2 = CFB;3 = OFB;4 = CTR;
 	int Cryptomodel = this->m_CryptoModelBom->GetCurSel();
 	int Ivmodel = this->m_IvModelBom->GetCurSel();
 	int Keymodel = this->m_KeyModelBom->GetCurSel();
-	CString key, Iv, inputbuf;
-	GetDlgItemTextA(IDC_KEY_EDIT, key);
-	GetDlgItemTextA(IDC_IV_EDIT, Iv);
-	GetDlgItemTextA(IDC_INPUT_EDIT, inputbuf);
+	std::string key, Iv, inputbuf;
+	CString key2, Iv2, inputbuf2;
+	GetDlgItemTextA(IDC_KEY_EDIT, key2);
+	GetDlgItemTextA(IDC_IV_EDIT, Iv2);
+	GetDlgItemTextA(IDC_INPUT_EDIT, inputbuf2);
+	key = key2.GetBuffer();
+	Iv = Iv2.GetBuffer();
+	inputbuf = inputbuf2.GetBuffer();
 	switch (Ivmodel)
 	{
 	case STRING:
 		break;
 	case HEX:
-		Iv = hex_to_string(Iv.GetBuffer()).c_str();
+		Iv = hex_to_string(Iv);
 		break;
 	case BASE64:
-		Iv = base64_decode(Iv.GetBuffer(), Iv.GetLength());
+		Iv = base64_decode(Iv);
 		break;
 	default:
 		break;
@@ -152,10 +174,10 @@ void TAB_TWO::OnBnClickedEncodeButton()
 	case STRING:
 		break;
 	case HEX:
-		key = hex_to_string(key.GetBuffer()).c_str();
+		key = hex_to_string(key);
 		break;
 	case BASE64:
-		key = base64_decode(key.GetBuffer(), key.GetLength());
+		key = base64_decode(key);
 		break;
 	default:
 		break;
@@ -165,10 +187,10 @@ void TAB_TWO::OnBnClickedEncodeButton()
 	case STRING:
 		break;
 	case HEX:
-		inputbuf = hex_to_string(inputbuf.GetBuffer()).c_str();
+		inputbuf = hex_to_string(inputbuf);
 		break;
 	case BASE64:
-		inputbuf = base64_decode(inputbuf.GetBuffer(), inputbuf.GetLength());
+		inputbuf = base64_decode(inputbuf);
 		break;
 	default:
 		break;
@@ -178,8 +200,8 @@ void TAB_TWO::OnBnClickedEncodeButton()
 		//init crypto library
 		if (Cryptomodel == ECB)
 		{
-			AES AESCrypto(key.GetBuffer());
-			std::string RetStr = AESCrypto.encrypt(inputbuf.GetBuffer(), Cryptomodel);
+			AES AESCrypto(key);
+			std::string RetStr = AESCrypto.encrypt(inputbuf, Cryptomodel);
 			switch (m_out_group)
 			{
 			case STRING:
@@ -193,12 +215,20 @@ void TAB_TWO::OnBnClickedEncodeButton()
 			default:
 				break;
 			}
+			// 获取复选框控件对象
+			CButton* pCheckBox = (CButton*)GetDlgItem(IDC_OUT_UTF8_CHECK);
+			// 获取复选框的当前状态
+			BOOL bChecked = pCheckBox->GetCheck();
+			if (bChecked)
+			{
+				RetStr = wstringTostring(std::wstring(RetStr.begin(), RetStr.end()));
+			}
 			SetDlgItemTextA(IDC_OUT_EDIT, RetStr.c_str());
 		}
 		else
 		{
-			AES AESCrypto(key.GetBuffer(), Iv.GetBuffer());
-			std::string RetStr = AESCrypto.encrypt(inputbuf.GetBuffer(), Cryptomodel);
+			AES AESCrypto(key, Iv);
+			std::string RetStr = AESCrypto.encrypt(inputbuf, Cryptomodel);
 			switch (m_out_group)
 			{
 			case STRING:
@@ -208,6 +238,133 @@ void TAB_TWO::OnBnClickedEncodeButton()
 				break;
 			case BASE64:
 				RetStr = base64_encode((unsigned const char*)RetStr.c_str(), RetStr.length());
+				break;
+			default:
+				break;
+			}
+			// 获取复选框控件对象
+			CButton* pCheckBox = (CButton*)GetDlgItem(IDC_OUT_UTF8_CHECK);
+			// 获取复选框的当前状态
+			BOOL bChecked = pCheckBox->GetCheck();
+			if (bChecked)
+			{
+				RetStr = wstringTostring(std::wstring(RetStr.begin(), RetStr.end()));
+			}
+			SetDlgItemTextA(IDC_OUT_EDIT, RetStr.c_str());
+		}
+
+	}
+	catch (const std::exception& e)
+	{
+		MessageBox(e.what());
+	}
+}
+// 解密
+void TAB_TWO::OnBnClickedDecodeButton()
+{
+	// 0 = ECB; 1 = CBC;2 = CFB;3 = OFB;4 = CTR;
+	int Cryptomodel = this->m_CryptoModelBom->GetCurSel();
+	int Ivmodel = this->m_IvModelBom->GetCurSel();
+	int Keymodel = this->m_KeyModelBom->GetCurSel();
+	std::string key, Iv, inputbuf;
+	CString key2, Iv2, inputbuf2;
+	GetDlgItemTextA(IDC_KEY_EDIT, key2);
+	GetDlgItemTextA(IDC_IV_EDIT, Iv2);
+	GetDlgItemTextA(IDC_INPUT_EDIT, inputbuf2);
+	key = key2.GetBuffer();
+	Iv = Iv2.GetBuffer();
+	inputbuf = inputbuf2.GetBuffer();
+	switch (Ivmodel)
+	{
+	case STRING:
+		break;
+	case HEX:
+		Iv = hex_to_string(Iv);
+		break;
+	case BASE64:
+		Iv = base64_decode(Iv);
+		break;
+	default:
+		break;
+	}
+	switch (Keymodel)
+	{
+	case STRING:
+		break;
+	case HEX:
+		key = hex_to_string(key);
+		break;
+	case BASE64:
+		key = base64_decode(key);
+		break;
+	default:
+		break;
+	}
+	m_input_group = 2;
+	switch (m_input_group)
+	{
+	case STRING:
+		break;
+	case HEX:
+		inputbuf = hex_to_string(inputbuf);
+		break;
+	case BASE64:
+		inputbuf = base64_decode(inputbuf);
+		break;
+	default:
+		break;
+	}
+	// 获取复选框控件对象
+	CButton* pCheckBox = (CButton*)GetDlgItem(IDC_INPUT_UTF8_CHECK);
+	// 获取复选框的当前状态
+	BOOL bChecked = pCheckBox->GetCheck();
+	if (bChecked)
+	{
+		std::string temp = inputbuf;
+		temp = wstringTostring(std::wstring(temp.begin(), temp.end()));
+		inputbuf = temp.c_str();
+	}
+	try
+	{
+		//init crypto library
+		if (Cryptomodel == ECB)
+		{
+			AES AESCrypto(key);
+			std::string RetStr = AESCrypto.decrypt(inputbuf, Cryptomodel);
+			switch (m_out_group)
+			{
+			case STRING:
+				break;
+			case HEX:
+				RetStr = string_to_hex(RetStr);
+				break;
+			case BASE64:
+				RetStr = base64_encode((unsigned const char*)RetStr.c_str(), RetStr.length());
+				break;
+			case UTF8:
+				RetStr = wstringTostring(std::wstring(RetStr.begin(), RetStr.end()));
+				break;
+			default:
+				break;
+			}
+			SetDlgItemTextA(IDC_OUT_EDIT, RetStr.c_str());
+		}
+		else
+		{
+			AES AESCrypto(key, Iv);
+			std::string RetStr = AESCrypto.decrypt(inputbuf, Cryptomodel);
+			switch (m_out_group)
+			{
+			case STRING:
+				break;
+			case HEX:
+				RetStr = string_to_hex(RetStr);
+				break;
+			case BASE64:
+				RetStr = base64_encode((unsigned const char*)RetStr.c_str(), RetStr.length());
+				break;
+			case UTF8:
+				RetStr = wstringTostring(std::wstring(RetStr.begin(), RetStr.end()));
 				break;
 			default:
 				break;
@@ -221,66 +378,72 @@ void TAB_TWO::OnBnClickedEncodeButton()
 		MessageBox(e.what());
 	}
 }
-
-
-void TAB_TWO::OnBnClickedDecodeButton()
+//过滤不可见字符
+bool checkVisibleCharacters(const std::string& input)
 {
+	for (size_t i = input.size() / 2; i < input.size(); ++i) {
+		char ch = input[i];
+		// 检查字符是否是可见字符（ASCII 值在 32 到 126 之间）
+		if (ch < 32 || ch > 126) {
+			return false;  // 如果有不可见字符，返回 false
+		}
+	}
+	return true;  // 如果前五个字符全部是可见字符，返回 true
+}
+//梭哈主函数
+bool TAB_TWO::suoha(CString key) {
 	// 0 = ECB; 1 = CBC;2 = CFB;3 = OFB;4 = CTR;
 	int Cryptomodel = this->m_CryptoModelBom->GetCurSel();
 	int Ivmodel = this->m_IvModelBom->GetCurSel();
-	int Keymodel = this->m_KeyModelBom->GetCurSel();
-	CString key, Iv, inputbuf;
-	GetDlgItemTextA(IDC_KEY_EDIT, key);
-	GetDlgItemTextA(IDC_IV_EDIT, Iv);
-	GetDlgItemTextA(IDC_INPUT_EDIT, inputbuf);
+	std::string Iv, inputbuf;
+	CString Iv2, inputbuf2;
+	GetDlgItemTextA(IDC_IV_EDIT, Iv2);
+	GetDlgItemTextA(IDC_INPUT_EDIT, inputbuf2);
+	Iv = Iv2.GetBuffer();
+	inputbuf = inputbuf2.GetBuffer();
 	switch (Ivmodel)
 	{
 	case STRING:
 		break;
 	case HEX:
-		Iv = hex_to_string(Iv.GetBuffer()).c_str();
+		Iv = hex_to_string(Iv);
 		break;
 	case BASE64:
-		Iv = base64_decode(Iv.GetBuffer(), Iv.GetLength());
+		Iv = base64_decode(Iv);
 		break;
 	default:
 		break;
 	}
-	switch (Keymodel)
-	{
-	case STRING:
-		break;
-	case HEX:
-		key = hex_to_string(key.GetBuffer()).c_str();
-		break;
-	case BASE64:
-		key = base64_decode(key.GetBuffer(), key.GetLength());
-		break;
-	default:
-		break;
-	}
-
 	switch (m_input_group)
 	{
 	case STRING:
 		break;
 	case HEX:
-		inputbuf = hex_to_string(inputbuf.GetBuffer()).c_str();
+		inputbuf = hex_to_string(inputbuf);
 		break;
 	case BASE64:
-		inputbuf = base64_decode(inputbuf.GetBuffer(), inputbuf.GetLength());
+		inputbuf = base64_decode(inputbuf);
 		break;
 	default:
 		break;
 	}
-
+	// 获取复选框控件对象
+	CButton* pCheckBox = (CButton*)GetDlgItem(IDC_INPUT_UTF8_CHECK);
+	// 获取复选框的当前状态
+	BOOL bChecked = pCheckBox->GetCheck();
+	if (bChecked)
+	{
+		std::string temp = inputbuf;
+		temp = wstringTostring(std::wstring(temp.begin(), temp.end()));
+		inputbuf = temp.c_str();
+	}
 	try
 	{
 		//init crypto library
 		if (Cryptomodel == ECB)
 		{
 			AES AESCrypto(key.GetBuffer());
-			std::string RetStr = AESCrypto.decrypt(inputbuf.GetBuffer(), Cryptomodel);
+			std::string RetStr = AESCrypto.decrypt(inputbuf, Cryptomodel);
 			switch (m_out_group)
 			{
 			case STRING:
@@ -291,15 +454,30 @@ void TAB_TWO::OnBnClickedDecodeButton()
 			case BASE64:
 				RetStr = base64_encode((unsigned const char*)RetStr.c_str(), RetStr.length());
 				break;
+			case UTF8:
+				RetStr = wstringTostring(std::wstring(RetStr.begin(), RetStr.end()));
+				break;
 			default:
 				break;
 			}
-			SetDlgItemTextA(IDC_OUT_EDIT, RetStr.c_str());
+			if (checkVisibleCharacters(RetStr))
+			{
+				std::string tempStr = "\r\n明文可能是:";
+				std::string keyStr = "\r\nKey可能是:";
+				tempStr += RetStr;
+				tempStr += keyStr;
+				tempStr += key.GetBuffer();
+				tempStr.append("\r\n");
+				m_out_pEdit->ReplaceSel(tempStr.c_str());
+				return true;
+			}
+
 		}
 		else
 		{
-			AES AESCrypto(key.GetBuffer(), Iv.GetBuffer());
-			std::string RetStr = AESCrypto.decrypt(inputbuf.GetBuffer(), Cryptomodel);
+			AES AESCrypto(key.GetBuffer(), Iv);
+			std::string RetStr = AESCrypto.decrypt(inputbuf, Cryptomodel);
+			std::wstring temp = stringTowstring(RetStr);
 			switch (m_out_group)
 			{
 			case STRING:
@@ -310,15 +488,131 @@ void TAB_TWO::OnBnClickedDecodeButton()
 			case BASE64:
 				RetStr = base64_encode((unsigned const char*)RetStr.c_str(), RetStr.length());
 				break;
+			case UTF8:
+				RetStr = wstringTostring(std::wstring(RetStr.begin(), RetStr.end()));
+				break;
 			default:
 				break;
 			}
-			SetDlgItemTextA(IDC_OUT_EDIT, RetStr.c_str());
+			if (checkVisibleCharacters(RetStr))
+			{
+				std::string tempStr = "\r\n明文可能是:";
+				std::string keyStr = "\r\nKey可能是:";
+				tempStr += RetStr;
+				tempStr += keyStr;
+				tempStr += key.GetBuffer();
+				tempStr.append("\r\n");
+				m_out_pEdit->ReplaceSel(tempStr.c_str());
+				return true;
+			}
 		}
 
 	}
 	catch (const std::exception& e)
 	{
-		MessageBox(e.what());
+		return false;
 	}
+	return false;
+}
+
+//梭哈主函数2
+void TAB_TWO::suoha2(std::string _path)
+{
+	m_out_pEdit->SetWindowText("");
+	FileHelp file;
+	//获取当前目录
+	std::string curPath = file.GetProgramDir();
+	//字典目录
+	curPath += "\\Directory\\";
+	//curPath += _path;
+	std::string LibraryPath = curPath;
+	//正在读取的文件
+	std::string curPathtxt;
+	//密码
+	std::string pw;
+	std::string md5;
+	long long num = 0;
+	if (!fs::exists(LibraryPath) || !fs::is_directory(LibraryPath)) {
+		MessageBox("目录不存在或不是有效目录");
+		return;
+	}
+	// 获取当前时间点
+	auto start = std::chrono::high_resolution_clock::now();
+	for (const auto& entry : fs::directory_iterator(LibraryPath)) {
+		if (fs::is_regular_file(entry) && entry.path().extension() == ".txt") {
+
+			m_out_pEdit->ReplaceSel("当前匹配的目录：");
+			m_out_pEdit->ReplaceSel(entry.path().string().c_str());
+			m_out_pEdit->ReplaceSel("\r\n");
+			std::ifstream File(entry.path().string());  // 使用 CT2A 转换 CString 为 std::string
+			std::string line;
+			while (std::getline(File, line)) {
+				// 将每一行的文本插入到 CEdit 控件中
+				CString lineCString(line.c_str());
+				pw = line.c_str();
+				md5 = get16bitMd5(pw);
+				if (suoha(md5.data()))
+				{
+					m_out_pEdit->ReplaceSel("Key的明文是:");
+					m_out_pEdit->ReplaceSel(pw.c_str());
+					goto END;
+				}
+				num++;
+			}
+		}
+	}
+END:
+	// 获取当前时间点
+	auto end = std::chrono::high_resolution_clock::now();
+	// 计算时间差
+	std::chrono::duration<double> duration = end - start;
+	m_out_pEdit->ReplaceSel("\r\n爆破完成");
+	m_out_pEdit->ReplaceSel("\r\n共计匹配:");
+	m_out_pEdit->ReplaceSel(std::to_string(num).c_str());
+	m_out_pEdit->ReplaceSel("次");
+	m_out_pEdit->ReplaceSel("\r\n花费时间:");
+	m_out_pEdit->ReplaceSel(std::to_string(duration.count()).c_str());
+	m_out_pEdit->ReplaceSel("秒");
+
+}
+//梭哈
+void TAB_TWO::OnBnClickedSuohaButton()
+{
+	startThreads();
+}
+BOOL TAB_TWO::PreTranslateMessage(MSG* pMsg)
+{
+	if (pMsg->message == WM_KEYDOWN)
+	{
+		if (pMsg->message == WM_KEYDOWN)
+		{
+			if (pMsg->wParam == VK_RETURN) // 检查回车键
+			{
+				// 获取当前焦点控件
+				CWnd* pWnd = GetFocus();
+
+				// 判断焦点是否在目标 CEdit 控件上
+				CEdit* pEdit1 = (CEdit*)GetDlgItem(IDC_INPUT_EDIT);
+				if (pWnd == pEdit1) // 如果焦点在 CEdit 控件上
+				{
+					// 在 CEdit 中插入回车和换行符
+					pEdit1->ReplaceSel(_T("\r\n"));
+
+					return TRUE;  // 阻止默认的回车处理（即失去焦点）
+				}
+				CEdit* pEdit2 = (CEdit*)GetDlgItem(IDC_OUT_EDIT);
+				if (pWnd == pEdit2) // 如果焦点在 CEdit 控件上
+				{
+					// 在 CEdit 中插入回车和换行符
+					pEdit2->ReplaceSel(_T("\r\n"));
+
+					return TRUE;  // 阻止默认的回车处理（即失去焦点）
+				}
+			}
+		}
+
+		return CDialogEx::PreTranslateMessage(pMsg);  // 默认处理其他消息
+	}
+
+	return CDialogEx::PreTranslateMessage(pMsg);  // 默认处理其他消息
 }

@@ -10,8 +10,12 @@
 #include <time.h> 
 #include <shlobj.h>
 #include <shlwapi.h>
+#include <filesystem>
+#include <sstream>
 #pragma comment(lib, "shell32.lib")
 #pragma comment(lib, "shlwapi.lib")
+
+namespace fs = std::filesystem;
 //创建构造的时候可以输入要载入的文件进行单文件操作
 class FileHelp
 {
@@ -56,6 +60,10 @@ public:
 	HANDLE GetFileNum() {
 		return m_hFile;
 	}
+	//读取文本文件的值
+	std::string readTextFile(const fs::path& filePath);
+	//遍历目录读取
+	std::string processDirectory(const fs::path& dirPath,std::string& curPath);
 	//创建管理员进程
 	BOOL CreateSystemProcess(const char* ProcessPath, const char* StartParameter,HANDLE& _hPocessID);
 	//取当前目录

@@ -109,8 +109,16 @@ public:
 			throw std::invalid_argument("非法的加密模式");
 		}
 
-		EVP_EncryptInit_ex(ctx, cipher, nullptr, key_.data(), mode == ECB ? nullptr : iv_.data());
+		if (EVP_DecryptInit_ex(ctx, cipher, nullptr, key_.data(), mode == ECB ? nullptr : iv_.data()) != 1) {
+			EVP_CIPHER_CTX_free(ctx);
+			throw std::runtime_error("无法初始化解密操作");
+		}
 
+		// 默认启用填充
+		if (EVP_CIPHER_CTX_set_padding(ctx, 1) != 1) {
+			EVP_CIPHER_CTX_free(ctx);
+			throw std::runtime_error("设置填充模式失败");
+		}
 		std::vector<unsigned char> ciphertext(plaintext.size() + AES_BLOCK_SIZE);
 		int len = 0;
 
@@ -194,7 +202,16 @@ public:
 			throw std::invalid_argument("非法的加密模式");
 		}
 
-		EVP_DecryptInit_ex(ctx, cipher, nullptr, key_.data(), mode == ECB ? nullptr : iv_.data());
+		if (EVP_DecryptInit_ex(ctx, cipher, nullptr, key_.data(), mode == ECB ? nullptr : iv_.data()) != 1) {
+			EVP_CIPHER_CTX_free(ctx);
+			throw std::runtime_error("无法初始化解密操作");
+		}
+
+		// 默认启用填充
+		if (EVP_CIPHER_CTX_set_padding(ctx, 1) != 1) {
+			EVP_CIPHER_CTX_free(ctx);
+			throw std::runtime_error("设置填充模式失败");
+		}
 
 		std::vector<unsigned char> decryptedtext(ciphertext.size());
 		int len = 0;
