@@ -613,6 +613,7 @@ BOOL TAB_TWO::PreTranslateMessage(MSG* pMsg)
 				{
 					pEdit1->SetSel(-1);          // 取消全选
 				}
+
 				else
 				{
 					pEdit1->SetSel(0, -1);           // 全选
