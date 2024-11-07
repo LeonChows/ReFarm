@@ -111,7 +111,7 @@ public:
 
 		if (EVP_EncryptInit_ex(ctx, cipher, nullptr, key_.data(), mode == ECB ? nullptr : iv_.data()) != 1) {
 			EVP_CIPHER_CTX_free(ctx);
-			throw std::runtime_error("无法初始化解密操作");
+			throw std::runtime_error("无法初始化加密操作");
 		}
 
 		// 默认启用填充
